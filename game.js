@@ -44,8 +44,8 @@ const el = {
 /* ----------------------------------------------------------
    1. Dimensiones del canvas
 ---------------------------------------------------------- */
-const VIEW_W = 960;
-const VIEW_H = 540;
+let VIEW_W = 960;
+let VIEW_H = 540;
 let scale = 1;
 let isPortrait = false;
 
@@ -54,18 +54,22 @@ function resize() {
   const h = window.innerHeight;
   isPortrait = w < h;
 
-  canvas.width  = VIEW_W;
-  canvas.height = VIEW_H;
-
   if (isPortrait) {
-    // Móvil vertical: escala al 100% de la anchura del teléfono sin distorsión
-    const ratio = w / VIEW_W;
-    canvas.style.width  = w + 'px';
-    canvas.style.height = Math.floor(VIEW_H * ratio) + 'px';
-    scale = ratio;
+    // Modo Vertical Móvil NATIVO A PANTALLA COMPLETA (100vw x 100vh)
+    VIEW_W = 540;
+    VIEW_H = Math.round(540 * (h / w));
+    canvas.width  = VIEW_W;
+    canvas.height = VIEW_H;
+    canvas.style.width  = '100vw';
+    canvas.style.height = '100vh';
+    scale = w / VIEW_W;
   } else {
-    // Escritorio / Móvil horizontal: ajuste proporcional perfecto 16:9
+    // Modo Horizontal / Escritorio (16:9)
+    VIEW_W = 960;
+    VIEW_H = 540;
     const ratio = Math.min(w / VIEW_W, h / VIEW_H);
+    canvas.width  = VIEW_W;
+    canvas.height = VIEW_H;
     canvas.style.width  = Math.floor(VIEW_W * ratio) + 'px';
     canvas.style.height = Math.floor(VIEW_H * ratio) + 'px';
     scale = ratio;
@@ -666,8 +670,8 @@ function update() {
   camera.x += (targetX - camera.x) * Math.min(1, dt * 6);
   camera.x = Math.max(0, Math.min(camera.x, level.worldW - VIEW_W));
 
-  // En móvil vertical desplazamos la cámara (+120px) para centrar a ErTalegas y el suelo en pantalla
-  const targetY = isPortrait ? 120 : 0;
+  // En móvil vertical elevamos la cámara para centrar a ErTalegas y el suelo al 68% de la pantalla (sobre los botones)
+  const targetY = isPortrait ? Math.round(480 - (VIEW_H * 0.68)) : 0;
   camera.y += (targetY - camera.y) * Math.min(1, dt * 6);
 
   // ---- Partículas ----
@@ -955,7 +959,7 @@ function drawBackground() {
 function drawPlatform(pl) {
   if (pl.type === 'ground') {
     ctx.fillStyle = '#8b6b3a';
-    ctx.fillRect(pl.x, pl.y + 8, pl.w, pl.h + 300); // Extender tierra hacia abajo para cubrir pantallas verticales
+    ctx.fillRect(pl.x, pl.y + 8, pl.w, Math.max(pl.h + 600, VIEW_H)); // Extender tierra hacia abajo para pantalla vertical completísima
     ctx.fillStyle = '#5a8c3a';
     ctx.fillRect(pl.x, pl.y, pl.w, 14);
     ctx.fillStyle = '#7ec850';

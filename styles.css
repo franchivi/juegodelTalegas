@@ -25,14 +25,12 @@ html, body {
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  background: radial-gradient(circle at 30% 20%, #2d3561 0%, #1a1a2e 70%);
+  background: #1a1a2e;
 }
 
 #game {
   display: block;
   background: #87CEEB;
-  box-shadow: 0 0 30px rgba(0,0,0,0.6);
-  border-radius: 8px;
   image-rendering: pixelated;
   image-rendering: crisp-edges;
 }
