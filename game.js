@@ -52,18 +52,18 @@ function resize() {
   const h = window.innerHeight;
   isPortrait = w < h;
 
+  canvas.width  = VIEW_W;
+  canvas.height = VIEW_H;
+
   if (isPortrait) {
-    // Modo vertical (móvil): llena 100% de la pantalla
-    canvas.width  = VIEW_W;
-    canvas.height = VIEW_H;
-    canvas.style.width  = '100vw';
-    canvas.style.height = '100vh';
-    scale = w / VIEW_W;
+    // Móvil vertical: escala al 100% de la anchura del teléfono sin distorsión
+    const ratio = w / VIEW_W;
+    canvas.style.width  = w + 'px';
+    canvas.style.height = Math.floor(VIEW_H * ratio) + 'px';
+    scale = ratio;
   } else {
-    // Modo horizontal (escritorio): ajuste de aspecto proporcional
+    // Escritorio / Móvil horizontal: ajuste proporcional perfecto 16:9
     const ratio = Math.min(w / VIEW_W, h / VIEW_H);
-    canvas.width  = VIEW_W;
-    canvas.height = VIEW_H;
     canvas.style.width  = Math.floor(VIEW_W * ratio) + 'px';
     canvas.style.height = Math.floor(VIEW_H * ratio) + 'px';
     scale = ratio;
@@ -664,8 +664,8 @@ function update() {
   camera.x += (targetX - camera.x) * Math.min(1, dt * 6);
   camera.x = Math.max(0, Math.min(camera.x, level.worldW - VIEW_W));
 
-  // En móvil vertical elevamos la cámara para centrar a ErTalegas y el suelo por encima de los botones
-  const targetY = isPortrait ? -120 : 0;
+  // En móvil vertical desplazamos la cámara (+120px) para centrar a ErTalegas y el suelo en pantalla
+  const targetY = isPortrait ? 120 : 0;
   camera.y += (targetY - camera.y) * Math.min(1, dt * 6);
 
   // ---- Partículas ----
