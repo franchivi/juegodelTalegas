@@ -45,26 +45,32 @@ const el = {
 const VIEW_W = 960;
 const VIEW_H = 540;
 let scale = 1;
+let isPortrait = false;
 
 function resize() {
   const w = window.innerWidth;
   const h = window.innerHeight;
-  const ratio = Math.min(w / VIEW_W, h / VIEW_H);
+  isPortrait = w < h;
 
-  canvas.width  = VIEW_W;
-  canvas.height = VIEW_H;
-  canvas.style.width  = Math.floor(VIEW_W * ratio) + 'px';
-  canvas.style.height = Math.floor(VIEW_H * ratio) + 'px';
-  scale = ratio;
+  if (isPortrait) {
+    // Modo vertical (móvil): llena 100% de la pantalla
+    canvas.width  = VIEW_W;
+    canvas.height = VIEW_H;
+    canvas.style.width  = '100vw';
+    canvas.style.height = '100vh';
+    scale = w / VIEW_W;
+  } else {
+    // Modo horizontal (escritorio): ajuste de aspecto proporcional
+    const ratio = Math.min(w / VIEW_W, h / VIEW_H);
+    canvas.width  = VIEW_W;
+    canvas.height = VIEW_H;
+    canvas.style.width  = Math.floor(VIEW_W * ratio) + 'px';
+    canvas.style.height = Math.floor(VIEW_H * ratio) + 'px';
+    scale = ratio;
+  }
 
   const orientMsg = document.getElementById('orient-notice');
-  if (orientMsg) {
-    if (w < h && w < 700) {
-      orientMsg.classList.remove('hidden');
-    } else {
-      orientMsg.classList.add('hidden');
-    }
-  }
+  if (orientMsg) orientMsg.classList.add('hidden');
 }
 window.addEventListener('resize', resize);
 window.addEventListener('orientationchange', () => setTimeout(resize, 200));
@@ -657,7 +663,10 @@ function update() {
   const targetX = player.x + player.w/2 - VIEW_W/2;
   camera.x += (targetX - camera.x) * Math.min(1, dt * 6);
   camera.x = Math.max(0, Math.min(camera.x, level.worldW - VIEW_W));
-  camera.y = 0;
+
+  // En móvil vertical elevamos la cámara para centrar a ErTalegas y el suelo por encima de los botones
+  const targetY = isPortrait ? -120 : 0;
+  camera.y += (targetY - camera.y) * Math.min(1, dt * 6);
 
   // ---- Partículas ----
   updateParticles();
@@ -944,7 +953,7 @@ function drawBackground() {
 function drawPlatform(pl) {
   if (pl.type === 'ground') {
     ctx.fillStyle = '#8b6b3a';
-    ctx.fillRect(pl.x, pl.y + 8, pl.w, pl.h);
+    ctx.fillRect(pl.x, pl.y + 8, pl.w, pl.h + 300); // Extender tierra hacia abajo para cubrir pantallas verticales
     ctx.fillStyle = '#5a8c3a';
     ctx.fillRect(pl.x, pl.y, pl.w, 14);
     ctx.fillStyle = '#7ec850';
