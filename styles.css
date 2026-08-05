@@ -80,6 +80,19 @@ html, body {
     0 0 60px rgba(255, 215, 0, 0.6);
 }
 
+.victory-img {
+  display: block;
+  margin: 0 auto 12px auto;
+  max-width: 160px;
+  width: 50vw;
+  height: auto;
+  max-height: 150px;
+  object-fit: cover;
+  border-radius: 16px;
+  border: 4px solid #b8860b;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.35);
+}
+
 .title {
   font-family: 'Bangers', cursive;
   font-size: clamp(48px, 9vw, 76px);
