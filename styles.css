@@ -24,15 +24,15 @@ html, body {
   display: flex;
   align-items: center;
   justify-content: center;
-  background:
-    radial-gradient(circle at 30% 20%, #2d3561 0%, #1a1a2e 70%);
+  overflow: hidden;
+  background: #1a1a2e;
 }
 
 #game {
   display: block;
+  width: 100vw;
+  height: 100vh;
   background: #87CEEB;
-  box-shadow: 0 0 40px rgba(0,0,0,0.6);
-  border-radius: 8px;
   image-rendering: pixelated;
   image-rendering: crisp-edges;
 }

@@ -42,36 +42,34 @@ const el = {
 };
 
 /* ----------------------------------------------------------
-   1. Dimensiones del canvas
----------------------------------------------------------- */
-const VIEW_W = 960;
-const VIEW_H = 540;
+let VIEW_W = 960;
+let VIEW_H = 540;
 let scale = 1;
 
 function resize() {
   const w = window.innerWidth;
   const h = window.innerHeight;
-  let ratio = Math.min(w / VIEW_W, h / VIEW_H);
-  
-  // En móviles en modo vertical (portrait), adaptamos la escala para ocupar el ancho máximo posible
-  if (w < h && w < 768) {
-    ratio = Math.max(ratio, w / VIEW_W);
+  const isPortrait = w < h;
+
+  if (isPortrait) {
+    // Modo vertical (móvil): adaptamos el alto de vista al teléfono
+    VIEW_W = 540;
+    VIEW_H = Math.round(540 * (h / w));
+  } else {
+    // Modo horizontal (escritorio / tablet): adaptamos el ancho de vista
+    VIEW_H = 540;
+    VIEW_W = Math.round(540 * (w / h));
   }
 
   canvas.width  = VIEW_W;
   canvas.height = VIEW_H;
-  canvas.style.width  = Math.floor(VIEW_W * ratio) + 'px';
-  canvas.style.height = Math.floor(VIEW_H * ratio) + 'px';
-  scale = ratio;
+  canvas.style.width  = w + 'px';
+  canvas.style.height = h + 'px';
+  scale = w / VIEW_W;
 
-  // Aviso de orientación si la pantalla es vertical en móvil
   const orientMsg = document.getElementById('orient-notice');
   if (orientMsg) {
-    if (w < h && w < 700) {
-      orientMsg.classList.remove('hidden');
-    } else {
-      orientMsg.classList.add('hidden');
-    }
+    orientMsg.classList.add('hidden');
   }
 }
 window.addEventListener('resize', resize);
@@ -664,8 +662,13 @@ function update() {
   // ---- Cámara ----
   const targetX = player.x + player.w/2 - VIEW_W/2;
   camera.x += (targetX - camera.x) * Math.min(1, dt * 6);
-  camera.x = Math.max(0, Math.min(camera.x, level.worldW - VIEW_W));
-  camera.y = 0;
+  camera.x = Math.max(0, Math.min(camera.x, Math.max(0, level.worldW - VIEW_W)));
+
+  const targetY = player.y + player.h/2 - VIEW_H * 0.62;
+  const minY = -150;
+  const maxY = Math.max(minY, level.deathY - VIEW_H + 40);
+  camera.y += (targetY - camera.y) * Math.min(1, dt * 6);
+  camera.y = Math.max(minY, Math.min(camera.y, maxY));
 
   // ---- Partículas ----
   updateParticles();
