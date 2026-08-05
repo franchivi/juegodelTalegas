@@ -363,26 +363,139 @@ html, body {
 }
 .t-shoot:active { background: rgba(200, 50, 30, 0.85); }
 
-#touch .pad-left { display: flex; gap: 14px; }
-#touch .pad-right { display: flex; gap: 14px; align-items: flex-end; }
-
-/* Mostrar controles táctiles solo en pantallas táctiles */
-@media (hover: none) and (pointer: coarse) {
-  body.touch-mode #touch.hidden { display: flex; }
+/* ---------- Aviso de orientación móvil ---------- */
+.orient-notice {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(255, 107, 26, 0.92);
+  color: #fff;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 700;
+  z-index: 30;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+  pointer-events: none;
+  text-align: center;
+  white-space: nowrap;
+  animation: pulse 1.5s ease-in-out infinite alternate;
 }
+.orient-notice.hidden { display: none; }
 
-/* Pantallas muy anchas ( tablets ) — botones un poco más grandes */
-@media (min-width: 600px) and (hover: none) and (pointer: coarse) {
-  .t-btn { width: 80px; height: 80px; font-size: 36px; }
-  .t-jump { width: 96px; height: 96px; }
+/* ---------- Controles táctiles ---------- */
+#touch {
+  position: fixed;
+  bottom: env(safe-area-inset-bottom, 10px);
+  left: 0;
+  right: 0;
+  height: 120px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding: 0 16px calc(env(safe-area-inset-bottom, 0px) + 10px);
+  z-index: 15;
+  pointer-events: none;
+  box-sizing: border-box;
 }
+#touch.hidden { display: none; }
+.t-btn {
+  pointer-events: auto;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border: 3px solid rgba(255,255,255,0.5);
+  background: rgba(255, 154, 60, 0.65);
+  color: #fff;
+  font-size: 28px;
+  font-weight: 800;
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: none;
+}
+.t-btn:active { background: rgba(255, 107, 26, 0.85); transform: scale(0.92); }
+.t-jump {
+  background: rgba(106, 176, 76, 0.7);
+  width: 76px; height: 76px;
+}
+.t-jump:active { background: rgba(68, 160, 76, 0.9); }
 
-/* Modo landscape en móvil — botones más compactos */
-@media (orientation: landscape) and (max-height: 500px) and (hover: none) and (pointer: coarse) {
-  #touch {
-    height: 110px;
-    padding-bottom: env(safe-area-inset-bottom, 0px);
+.t-shoot {
+  background: rgba(220, 80, 60, 0.65);
+  width: 64px; height: 64px;
+  font-size: 24px;
+}
+.t-shoot:active { background: rgba(200, 50, 30, 0.9); }
+
+#touch .pad-left { display: flex; gap: 10px; }
+#touch .pad-right { display: flex; gap: 10px; align-items: flex-end; }
+
+/* Mostrar controles táctiles en dispositivos táctiles */
+body.touch-mode #touch { display: flex; }
+body.touch-mode #touch.hidden { display: none; }
+
+/* ---------- Adaptación Responsive Móvil ---------- */
+@media (max-width: 650px), (max-height: 550px) {
+  .panel {
+    padding: 18px 20px;
+    max-height: 92vh;
+    overflow-y: auto;
+    border-width: 4px;
+    border-radius: 18px;
   }
-  .t-btn { width: 60px; height: 60px; font-size: 26px; border-width: 3px; }
-  .t-jump { width: 72px; height: 72px; }
+  .menu-logo {
+    max-height: 85px;
+    margin-bottom: 8px;
+  }
+  .victory-img {
+    max-height: 100px;
+    margin-bottom: 6px;
+  }
+  .title {
+    font-size: clamp(32px, 8vw, 50px);
+    margin-bottom: 4px;
+  }
+  .subtitle {
+    font-size: 13px;
+    margin-bottom: 6px;
+  }
+  .tagline {
+    font-size: 18px;
+    margin-bottom: 10px;
+  }
+  .btn {
+    padding: 10px 18px;
+    font-size: 16px;
+    margin: 4px;
+    border-radius: 12px;
+  }
+  .btn-brand-logo {
+    height: 22px;
+  }
+  #hud {
+    top: 8px;
+    left: 8px;
+    gap: 6px;
+  }
+  .hud-item {
+    padding: 4px 8px;
+    font-size: 14px;
+    border-radius: 8px;
+  }
+  #sound-bar {
+    top: 8px;
+    right: 8px;
+  }
+  .sound-btn {
+    width: 34px;
+    height: 34px;
+    font-size: 16px;
+    border-radius: 8px;
+  }
 }

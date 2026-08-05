@@ -51,14 +51,31 @@ let scale = 1;
 function resize() {
   const w = window.innerWidth;
   const h = window.innerHeight;
-  const ratio = Math.min(w / VIEW_W, h / VIEW_H);
+  let ratio = Math.min(w / VIEW_W, h / VIEW_H);
+  
+  // En móviles en modo vertical (portrait), adaptamos la escala para ocupar el ancho máximo posible
+  if (w < h && w < 768) {
+    ratio = Math.max(ratio, w / VIEW_W);
+  }
+
   canvas.width  = VIEW_W;
   canvas.height = VIEW_H;
-  canvas.style.width  = (VIEW_W * ratio) + 'px';
-  canvas.style.height = (VIEW_H * ratio) + 'px';
+  canvas.style.width  = Math.floor(VIEW_W * ratio) + 'px';
+  canvas.style.height = Math.floor(VIEW_H * ratio) + 'px';
   scale = ratio;
+
+  // Aviso de orientación si la pantalla es vertical en móvil
+  const orientMsg = document.getElementById('orient-notice');
+  if (orientMsg) {
+    if (w < h && w < 700) {
+      orientMsg.classList.remove('hidden');
+    } else {
+      orientMsg.classList.add('hidden');
+    }
+  }
 }
 window.addEventListener('resize', resize);
+window.addEventListener('orientationchange', () => setTimeout(resize, 200));
 resize();
 
 /* ----------------------------------------------------------
